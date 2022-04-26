@@ -1,29 +1,27 @@
 import os
+import pprint
 import argparse
+import torch.nn as nn
+from torch import optim
+from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
-import pprint
-from torch import optim
-import torch.nn as nn
 
 # path to a pretrained word embedding file
-word_emb_path = '/home/devamanyu/glove.840B.300d.txt'
+word_emb_path = '/home/ICT2000/yin/emnlp/MISA/glove.840B.300d.txt'
 assert(word_emb_path is not None)
-
 
 username = Path.home().name
 project_dir = Path(__file__).resolve().parent.parent
-sdk_dir = project_dir.joinpath('CMU-MultimodalSDK')
+sdk_dir = '/home/ICT2000/yin/CMU-MultimodalSDK'
 data_dir = project_dir.joinpath('datasets')
-data_dict = {'mosi': data_dir.joinpath('MOSI'), 'mosei': data_dir.joinpath(
-    'MOSEI'), 'ur_funny': data_dir.joinpath('UR_FUNNY')}
-optimizer_dict = {'RMSprop': optim.RMSprop, 'Adam': optim.Adam}
+data_dict = {
+    'mosi': data_dir.joinpath('MOSI'),
+    'mosei': data_dir.joinpath('MOSEI')}
+optimizer_dict = {'RMSprop': optim.RMSprop, 'Adam': optim.Adam, 'AdamW': optim.AdamW}
 activation_dict = {'elu': nn.ELU, "hardshrink": nn.Hardshrink, "hardtanh": nn.Hardtanh,
                    "leakyrelu": nn.LeakyReLU, "prelu": nn.PReLU, "relu": nn.ReLU, "rrelu": nn.RReLU,
                    "tanh": nn.Tanh}
-
 
 def str2bool(v):
     """string to boolean"""
@@ -33,7 +31,6 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
-
 
 class Config(object):
     def __init__(self, **kwargs):
@@ -62,7 +59,6 @@ class Config(object):
         config_str += pprint.pformat(self.__dict__)
         return config_str
 
-
 def get_config(parse=True, **optional_kwargs):
     """
     Get configurations as attributes of class
@@ -76,8 +72,8 @@ def get_config(parse=True, **optional_kwargs):
     parser.add_argument('--mode', type=str, default='train')
     parser.add_argument('--runs', type=int, default=5)
 
-    # Bert
-    parser.add_argument('--use_bert', type=str2bool, default=True)
+    # Text encoder
+    parser.add_argument('--text_encoder', type=str, default='bert')
     parser.add_argument('--use_cmd_sim', type=str2bool, default=True)
 
     # Train
@@ -94,14 +90,14 @@ def get_config(parse=True, **optional_kwargs):
     parser.add_argument('--sp_weight', type=float, default=0.0)
     parser.add_argument('--recon_weight', type=float, default=1.0)
 
-    parser.add_argument('--learning_rate', type=float, default=1e-4)
-    parser.add_argument('--optimizer', type=str, default='Adam')
+    parser.add_argument('--learning_rate', type=float, default=1e-5)
+    parser.add_argument('--optimizer', type=str, default='AdamW')
     parser.add_argument('--clip', type=float, default=1.0)
 
     parser.add_argument('--rnncell', type=str, default='lstm')
     parser.add_argument('--embedding_size', type=int, default=300)
     parser.add_argument('--hidden_size', type=int, default=128)
-    parser.add_argument('--dropout', type=float, default=0.5)
+    parser.add_argument('--dropout', type=float, default=0.1)
     parser.add_argument('--reverse_grad_weight', type=float, default=1.0)
     # Selectin activation from 'elu', "hardshrink", "hardtanh", "leakyrelu", "prelu", "relu", "rrelu", "tanh"
     parser.add_argument('--activation', type=str, default='relu')
@@ -126,9 +122,6 @@ def get_config(parse=True, **optional_kwargs):
     elif kwargs.data == "mosei":
         kwargs.num_classes = 1
         kwargs.batch_size = 16
-    elif kwargs.data == "ur_funny":
-        kwargs.num_classes = 2
-        kwargs.batch_size = 32
     else:
         print("No dataset mentioned")
         exit()

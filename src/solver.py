@@ -21,7 +21,6 @@ torch.cuda.manual_seed_all(123)
 from utils import to_gpu, time_desc_decorator, DiffLoss, MSE, SIMSE, CMD
 import models
 
-
 class Solver(object):
     def __init__(self, train_config, dev_config, test_config, train_data_loader, dev_data_loader, test_data_loader, is_train=True, model=None):
 
@@ -51,7 +50,7 @@ class Solver(object):
             elif self.train_config.data == "ur_funny":
                 if "bert" in name:
                     param.requires_grad = False
-            
+
             if 'weight_hh' in name:
                 nn.init.orthogonal_(param)
             print('\t' + name, param.requires_grad)
@@ -130,7 +129,7 @@ class Solver(object):
                     similarity_loss = cmd_loss
                 else:
                     similarity_loss = domain_loss
-                
+
                 loss = cls_loss + \
                     self.train_config.diff_weight * diff_loss + \
                     self.train_config.sim_weight * similarity_loss + \
@@ -152,6 +151,7 @@ class Solver(object):
             print(f"Training loss: {round(np.mean(train_loss), 4)}")
 
             valid_loss, valid_acc = self.eval(mode="dev")
+            print(f"Val loss: {round(valid_loss, 4)}")
             
             print(f"Current patience: {curr_patience}, current trial: {num_trials}.")
             if valid_loss <= best_valid_loss:
@@ -218,7 +218,8 @@ class Solver(object):
                 if self.train_config.data == "ur_funny":
                     y = y.squeeze()
                 
-                cls_loss = self.criterion(y_tilde, y)
+                criterion = nn.L1Loss()
+                cls_loss = criterion(y_tilde, y)
                 loss = cls_loss
 
                 eval_loss.append(loss.item())
@@ -278,7 +279,7 @@ class Solver(object):
             mult_a7 = self.multiclass_acc(test_preds_a7, test_truth_a7)
             mult_a5 = self.multiclass_acc(test_preds_a5, test_truth_a5)
             
-            f_score = f1_score((test_preds[non_zeros] > 0), (test_truth[non_zeros] > 0), average='weighted')
+            f_score = f1_score((test_truth[non_zeros] > 0), (test_preds[non_zeros] > 0), average='weighted')
             
             # pos - neg
             binary_truth = (test_truth[non_zeros] > 0)

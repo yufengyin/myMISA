@@ -100,7 +100,7 @@ class MOSI:
                 print("Labels have been downloaded previously.")
             
             # define your different modalities - refer to the filenames of the CSD files
-            visual_field = 'CMU_MOSI_VisualFacet_4.1'
+            visual_field = 'CMU_MOSI_Visual_Facet_41'
             acoustic_field = 'CMU_MOSI_COVAREP'
             text_field = 'CMU_MOSI_TimestampedWords'
 
@@ -193,7 +193,6 @@ class MOSI:
                 visual = np.asarray(visual)
                 acoustic = np.asarray(acoustic)
 
-
                 # z-normalization per instance and remove nan/infs
                 visual = np.nan_to_num((visual - visual.mean(0, keepdims=True)) / (EPS + np.std(visual, axis=0, keepdims=True)))
                 acoustic = np.nan_to_num((acoustic - acoustic.mean(0, keepdims=True)) / (EPS + np.std(acoustic, axis=0, keepdims=True)))
@@ -255,7 +254,6 @@ class MOSEI:
             self.pretrained_emb, self.word2id = torch.load(CACHE_PATH)
 
         except:
-
             # create folders for storing the data
             if not os.path.exists(DATA_PATH):
                 check_call(' '.join(['mkdir', '-p', DATA_PATH]), shell=True)
@@ -305,7 +303,7 @@ class MOSEI:
             # first we align to words with averaging, collapse_function receives a list of functions
             dataset.align(text_field, collapse_functions=[avg])
 
-            label_field = 'CMU_MOSEI_LabelsSentiment'
+            label_field = 'CMU_MOSEI_Labels'
 
             # we add and align to lables to obtain labeled segments
             # this time we don't apply collapse functions so that the temporal sequences are preserved
@@ -388,7 +386,7 @@ class MOSEI:
                     test.append(((words, visual, acoustic, actual_words), label, segment))
                 else:
                     print(f"Found video that doesn't belong to any splits: {vid}")
-                
+
 
             print(f"Total number of {num_drop} datapoints have been dropped.")
 
