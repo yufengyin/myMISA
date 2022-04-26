@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# data
+glove.840B.300d.txt
+datasets/
