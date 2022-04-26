@@ -13,7 +13,6 @@ from torch.nn import functional as F
 
 
 if __name__ == '__main__':
-    
     # Setting random seed
     random_name = str(random())
     random_seed = 336   

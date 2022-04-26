@@ -53,14 +53,14 @@ class Solver(object):
 
             if 'weight_hh' in name:
                 nn.init.orthogonal_(param)
-            print('\t' + name, param.requires_grad)
+            #print('\t' + name, param.requires_grad)
 
         # Initialize weight of Embedding matrix with Glove embeddings
-        if not self.train_config.use_bert:
+        if self.train_config.text_encoder == 'glove':
             if self.train_config.pretrained_emb is not None:
                 self.model.embed.weight.data = self.train_config.pretrained_emb
             self.model.embed.requires_grad = False
-        
+
         if torch.cuda.is_available() and cuda:
             self.model.cuda()
 

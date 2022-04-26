@@ -105,7 +105,7 @@ def get_loader(config, shuffle=True):
                 sentence = file.readline()
                 text_list.append(sentence)
 
-        if config.bert_model == 'bert':
+        if config.text_encoder == 'bert':
             SENT_LEN = sentences.size(0)
             bert_details = []
             for sample in batch:
@@ -117,14 +117,14 @@ def get_loader(config, shuffle=True):
             bert_sentences = torch.LongTensor([sample["input_ids"] for sample in bert_details])
             bert_sentence_types = torch.LongTensor([sample["token_type_ids"] for sample in bert_details])
             bert_sentence_att_mask = torch.LongTensor([sample["attention_mask"] for sample in bert_details])
-        elif config.bert_model == 'roberta':
+        elif config.text_encoder == 'roberta':
             encoded_bert_sent = roberta_tokenizer(text_list, padding=True, truncation=True,
                                             max_length=roberta_tokenizer.model_max_length, return_tensors="pt")
 
             bert_sentences = torch.LongTensor(encoded_bert_sent["input_ids"])
             bert_sentence_types = bert_sentences
             bert_sentence_att_mask = torch.LongTensor(encoded_bert_sent["attention_mask"])
-        elif config.bert_model == 'deberta':
+        elif config.text_encoder == 'deberta':
             encoded_bert_sent = deberta_tokenizer(text_list, padding=True, truncation=True,
                                             max_length=deberta_tokenizer.model_max_length, return_tensors="pt")
 

@@ -76,7 +76,7 @@ class MISA(nn.Module):
             self.project_t = nn.Sequential()
             if self.config.text_encoder == 'bert':
                 self.project_t.add_module('project_t', nn.Linear(in_features=768, out_features=config.hidden_size))
-            elif self.config.text_encoder == 'robert':
+            elif self.config.text_encoder == 'roberta':
                 self.project_t.add_module('project_t', nn.Linear(in_features=1024, out_features=config.hidden_size))
             elif self.config.text_encoder == 'deberta':
                 self.project_t.add_module('project_t', nn.Linear(in_features=1024, out_features=config.hidden_size))
