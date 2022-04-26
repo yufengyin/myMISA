@@ -131,3 +131,7 @@ dmypy.json
 # data
 glove.840B.300d.txt
 datasets/
+
+# script
+src/*.txt
+src/*.sh
