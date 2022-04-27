@@ -131,6 +131,7 @@ dmypy.json
 # data
 glove.840B.300d.txt
 datasets/
+src/checkpoints
 
 # script
 src/*.txt
